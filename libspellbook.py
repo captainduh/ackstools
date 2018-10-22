@@ -69,4 +69,4 @@ def genSpells(slist, level, intel, excess):
 
 def printSpells(known):
   for j in range(0,len(known)):
-    print "" + str(j+1) + ": " + ', '.join(known[j])
+    print ("" + str(j+1) + ": " + ', '.join(known[j]))

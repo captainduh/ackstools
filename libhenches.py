@@ -279,7 +279,7 @@ def genHenches(numHenches, level, classes, market, al, spells, names, profs,gear
           try:
             items.append(tables.evaltable(itemtable[t]))
           except KeyError:
-            print "No items for you on bad key: " + itemtable[t]
+            print ("No items for you on bad key: " + itemtable[t])
             gear = False
       istr = ", ".join(items)
       if istr != "":

@@ -1,10 +1,10 @@
-#!/usr/bin/python
-
 # library for loading and rolling on random tables
 
 import re
 import random
+import logging
 
+logger = logging.getLogger('discord')
 dicereg = re.compile('(\d+)d(\d+)')
 tabledicereg = re.compile('^(\d+)d(\d+)$')
 # I could probably do arbitrary-length sums with (\d*)(\+\d*)+...
@@ -78,16 +78,16 @@ def process(entry):
   return entry
 
 def evaltable(tablename):
-  (numtoroll, diesize) = tabledice[tablename]
-  ind = simpleroll(numtoroll, diesize)
-  l = tableentries[tablename]
-  cands = filter(lambda (i, s): i >= ind, l)
-  if cands == []:
-    print "ERROR: " + tablename + " and index "+ str(ind) +" explodes."
-    print l
-  entry = cands[0][1]
-  # if cands has length 0, we have other problems
-  return process(entry).rstrip(', ').lstrip(', ')
+    (numtoroll, diesize) = tabledice[tablename]
+    ind = simpleroll(numtoroll, diesize)
+    l = tableentries[tablename]
+    cands = list(filter((lambda t: t[0] >= ind), l))
+    if cands == []:
+        logger.error (tablename + " and index "+ str(ind) +" explodes.")
+        logger.error (l)
+    entry = cands[0][1]
+    # if cands has length 0, we have other problems
+    return process(entry).rstrip(', ').lstrip(', ')
 
 def loadtables(fname):
   f = open(fname, 'r')
@@ -97,7 +97,7 @@ def loadtables(fname):
   # get our #includes, basically
   worklist = [s[5:] for s in comments if s.startswith('LOAD ')]
   lines = filter(lambda l: not l.startswith('#'), lines)
-  lines = map(lambda l: l.lstrip().rstrip(), lines)
+  lines = list(map(lambda l: l.lstrip().rstrip(), lines))
   while lines != []:
     tname = lines.pop(0)
     dice = lines.pop(0)

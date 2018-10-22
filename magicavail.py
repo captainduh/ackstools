@@ -1,4 +1,3 @@
-#!/usr/bin/python2
 
 import random
 import argparse
@@ -30,20 +29,27 @@ def doLine(marketclass, item, price, numMonths, double):
   if not double: price = 2*price
   num = getnum(marketclass, price, numMonths)
   if num > 0:
-    print item + ": " + str(num) + " @ " + str(price) + "gp"
+    return item + ": " + str(num) + " @ " + str(price) + "gp\n"
 
-parser = argparse.ArgumentParser(description="Generate magic items avail in town")
-parser.add_argument("-m","--market",type=int, default=4,help="Market class to gen for")
-parser.add_argument("-f","--inFile",default="./magicprices",help="File of item prices")
-parser.add_argument("-n","--numMonths",type=int,default=1,help="Number of months to gen for")
-parser.add_argument("-d","--double",action="store_true",help="Don't double prices; used for nonmagic item generation")
-args = parser.parse_args()
 
-infile = open(args.inFile,"r")
-lines = infile.readlines()
-infile.close()
-lines = filter(lambda s: not s.startswith('#'), lines)
-lines = map(lambda k: k.lstrip().rstrip(), lines)
-lines = map(lambda k: k.split(":"), lines)
+#parser = argparse.ArgumentParser(description="Generate magic items avail in town")
+#parser.add_argument("-m","--market",type=int, default=4,help="Market class to gen for")
+#parser.add_argument("-f","--inFile",default="ackstools/magicprices",help="File of item prices")
+#parser.add_argument("-n","--numMonths",type=int,default=1,help="Number of months to gen for")
+#parser.add_argument("-d","--double",action="store_true",help="Don't double prices; used for nonmagic item generation")
+#args = parser.parse_args()
+def genMarketAvailability(marketClass:int, numMonths:int):
+    infile = open("ackstools/magicprices","r")
+    lines = infile.readlines()
+    infile.close()
+    lines = filter(lambda s: not s.startswith('#'), lines)
+    lines = map(lambda k: k.lstrip().rstrip(), lines)
+    lines = map(lambda k: k.split(":"), lines)
 
-map(lambda l: doLine(args.market, l[0],int(l[1]), args.numMonths,args.double), lines)
+    marketAvailability = ""
+    for line in lines:
+        item = doLine(marketClass, line[0], int(line[1]), numMonths, False)
+        if item is not None:
+            marketAvailability += item
+    return marketAvailability
+

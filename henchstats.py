@@ -37,7 +37,7 @@ if args.genprofs != "":
 if args.filterclass:
   cl = [t[0] for t in classes]
   if args.filterclass not in cl:
-    print "Class %s not found in class file (used same case?)"%args.filterclass
+    print ("Class %s not found in class file (used same case?)"%args.filterclass)
     sys.exit(1)
 
 
@@ -47,17 +47,17 @@ if args.market == 10:
   else:
     ol = libhenches.genHenches(args.num, int(args.level), classes, args.market, args.alignment, spells, names, profs, args.treasure != '')
   outstring = '\n'.join(ol)
-  print outstring
+  print (outstring)
 
 else:
   for month in range(0,args.num):
-    print "Month " + str(month) + ":"
+    print ("Month " + str(month) + ":")
     for level in range(0,5):
       numHenches = libhenches.rollMarket(libhenches.marketClasses[args.market-1][level])
-      print "L" + str(level) + "s: " + str(numHenches)
+      print ("L" + str(level) + "s: " + str(numHenches))
       if args.filterclass:
         ol = libhenches.genHenchesFiltered(args.filterclass, numHenches,level, classes, args.market, args.alignment, spells, names, profs, args.treasure != '') 
       else:
         ol = libhenches.genHenches(numHenches, level, classes, args.market, args.alignment, spells, names, profs, args.treasure != '')
       outstring = '\n'.join(ol)
-      print outstring
+      print (outstring)
