@@ -10,6 +10,24 @@ STD_RATION_PRICE = 1.5
 STD_RATION_LIFESPAN = 7
 IRON_RATION_LIFESPAN = 60
 
+def muleteer(mans:int, days:int):
+  # per page 94, 8 lb of water and 2lb of food (1 st total) per man per day
+  # rations are sold per week, -> 1.4st of food per price given
+
+  mule_requirements = ""
+  if days > IRON_RATION_LIFESPAN:
+    mule_requirements += "WARNING: This trip is so long that your iron rations will spoil.  You will need to forage.\n"
+
+  supply_mass = mans*days
+  # assum: 1.5gp/man*week for standard rations, 3.5gp/man*week for iron rations
+  supply_cost = (mans * STD_RATION_PRICE * min(days, 7) + mans * IRON_RATION_PRICE * max(days-7, 0)) / 7.0
+  num_mules_60 = int(math.ceil(supply_mass / MULE_CAP_60))
+  num_mules_120 = int(math.ceil(supply_mass / MULE_CAP_120))
+  mule_requirements += ("At 60' speed, you will need %d mules to carry rations, and have %0.1f stone extra carrying capacity.\n"%(num_mules_60, num_mules_60 * MULE_CAP_60 - supply_mass))
+  mule_requirements += ("At 120' speed, you will need %d mules to carry rations, and have %0.1f stone extra carrying capacity.\n"%(num_mules_120, num_mules_120 * MULE_CAP_120 - supply_mass))
+  mule_requirements += ("Your rations for this trip will cost %0.1f gp (%0.1f per person)\n"%(supply_cost, supply_cost / mans))
+  return mule_requirements
+  
 def main():
   parser = argparse.ArgumentParser(description="Compute XP and GP shares for party members")
   parser.add_argument("-mans",default=10,type=int,help="Number of mans on expedition")
@@ -18,23 +36,7 @@ def main():
 
   mans = args.mans
   days = args.days
-
-  # per page 94, 8 lb of water and 2lb of food (1 st total) per man per day
-  # rations are sold per week, -> 1.4st of food per price given
-
-  if days > IRON_RATION_LIFESPAN:
-    print "WARNING: This trip is so long that your iron rations will spoil.  You will need to forage."
-
-  supply_mass = mans*days
-  # assum: 1.5gp/man*week for standard rations, 3.5gp/man*week for iron rations
-  supply_cost = (mans * (STD_RATION_PRICE * days + \
-    min(0, (IRON_RATION_PRICE - STD_RATION_PRICE) * (days - 7)))) / 7.0
-  num_mules_60 = int(math.ceil(supply_mass / MULE_CAP_60))
-  num_mules_120 = int(math.ceil(supply_mass / MULE_CAP_120))
-  print "At 60' speed, you will need %d mules to carry rations, and have %0.1f stone extra carrying capacity."%(num_mules_60, num_mules_60 * MULE_CAP_60 - supply_mass)
-  print "At 120' speed, you will need %d mules to carry rations, and have %0.1f stone extra carrying capacity."%(num_mules_120, num_mules_120 * MULE_CAP_120 - supply_mass)
-  print "Your rations for this trip will cost %0.1f gp (%0.1f per person)"%(supply_cost, supply_cost / mans)
-
-
+  print (muleteer(mans, days))
+  
 if __name__ == "__main__":
   main()
